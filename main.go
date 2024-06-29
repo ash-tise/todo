@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/ash-tise/todo/db"
 	"github.com/ash-tise/todo/todos"
 )
@@ -11,14 +9,13 @@ func main() {
 
 	db.InitDB()
 
-	todo := todos.NewTodo("get this app done")
+	// todo := todos.NewTodo("test3")
+	// err := todo.AddToDB()
 
-	err := todo.AddToDB()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+	todos.DisplayTodos()
 
-	fmt.Println("successfully added todo")
 }

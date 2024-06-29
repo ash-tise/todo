@@ -27,3 +27,16 @@ func InitDB() {
 	DB.Exec(createToDosTable)
 
 }
+
+func GetRowCount() (int, error) {
+	query := "SELECT COUNT(*) FROM todos"
+	var count int
+
+	err := DB.QueryRow(query).Scan(&count)
+
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
