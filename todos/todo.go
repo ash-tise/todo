@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
 
 	"github.com/ash-tise/todo/db"
 )
@@ -122,14 +124,36 @@ func DisplayTodos() error {
 		return nil
 	}
 
-	fmt.Println("ID  Todo     Priority\n---------------------")
+	width := getLongestTodoLen()
 
+	fmt.Println(strings.Repeat("-", width+8)+"\n|", strings.Repeat(" ", width+4), "|")
 	for index, todo := range todos {
-		fmt.Printf("%d)  %s  |  %s\n", index+1, todo.Task, todo.Priority)
+		// coudln't get dynamic padding to work
+		padding := width - len(todo.Task)
+		// fmt.Printf("%d)  %-*s  |  %s\n", index+1, padding, todo.Task, todo.Priority)
+		fmt.Print("| "+strconv.FormatInt(int64(index+1), 10)+") "+todo.Task+strings.Repeat(" ", padding)+"  | ", "\n|"+strings.Repeat(" ", width+6)+"|", "\n")
 	}
 
-	fmt.Println()
+	fmt.Print(strings.Repeat("-", width+8), "\n\n")
 
 	return nil
 
+}
+
+func getLongestTodoLen() int {
+	todos, err := fetchRows()
+
+	if err != nil {
+		return 0
+	}
+
+	var max int
+
+	for _, todo := range todos {
+		if len(todo.Task) > max {
+			max = len(todo.Task)
+		}
+	}
+
+	return max
 }
