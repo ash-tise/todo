@@ -74,6 +74,7 @@ func RemoveFromDB(index int) error {
 		}
 	}
 
+	fmt.Println("Could not find index!")
 	return errors.New("could not find index")
 
 }
@@ -121,9 +122,13 @@ func DisplayTodos() error {
 		return nil
 	}
 
+	fmt.Println("ID  Todo     Priority\n---------------------")
+
 	for index, todo := range todos {
 		fmt.Printf("%d)  %s  |  %s\n", index+1, todo.Task, todo.Priority)
 	}
+
+	fmt.Println()
 
 	return nil
 

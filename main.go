@@ -9,23 +9,6 @@ func main() {
 
 	db.InitDB()
 
-	// todo := todos.NewTodo("test3")
-	// err := todo.AddToDB()
-
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// err := todos.RemoveFromDB(1)
-
-	// if err != nil {
-	// 	return
-	// }
-
-	err := todos.DisplayTodos()
-
-	if err != nil {
-		return
-	}
+	todos.DisplayTodos()
 
 }
