@@ -1,6 +1,7 @@
 package todos
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
@@ -44,6 +45,37 @@ func (t Todo) AddToDB() error {
 	}
 
 	return nil
+}
+
+func RemoveFromDB(index int) error {
+
+	todos, err := fetchRows()
+
+	if err != nil {
+		return err
+	}
+
+	if len(todos) == 0 {
+		fmt.Println("You currently have no ToDos!")
+		return errors.New("no todos to remove")
+	}
+
+	for i, todo := range todos {
+		if i+1 == index {
+			key := todo.Task
+			query := "DELETE FROM todos WHERE todo = ?"
+			_, err := db.DB.Exec(query, key)
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			return nil
+		}
+	}
+
+	return errors.New("could not find index")
+
 }
 
 func fetchRows() ([]Todo, error) {

@@ -16,6 +16,16 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-	todos.DisplayTodos()
+	// err := todos.RemoveFromDB(1)
+
+	// if err != nil {
+	// 	return
+	// }
+
+	err := todos.DisplayTodos()
+
+	if err != nil {
+		return
+	}
 
 }
