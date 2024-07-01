@@ -11,21 +11,24 @@ import (
 )
 
 type Todo struct {
-	Task     string
-	Priority string
+	Task      string
+	Priority  string
+	Completed bool
 }
 
 func NewTodo(task string) Todo {
 	return Todo{
-		Task:     task,
-		Priority: "medium",
+		Task:      task,
+		Priority:  "medium",
+		Completed: false,
 	}
 }
 
 func NewTodoWithPriority(task, priority string) Todo {
 	return Todo{
-		Task:     task,
-		Priority: priority,
+		Task:      task,
+		Priority:  priority,
+		Completed: false,
 	}
 }
 
@@ -83,7 +86,7 @@ func RemoveFromDB(index int) error {
 
 func fetchRows() ([]Todo, error) {
 
-	query := `SELECT todo, priority FROM todos`
+	query := `SELECT todo, priority FROM todos ORDER BY created_at`
 	var todos []Todo
 
 	rows, err := db.DB.Query(query)
@@ -113,6 +116,9 @@ func fetchRows() ([]Todo, error) {
 
 func DisplayTodos() error {
 
+	green := "\033[32m"
+	reset := "\033[0m"
+
 	todos, err := fetchRows()
 
 	if err != nil {
@@ -130,8 +136,14 @@ func DisplayTodos() error {
 	for index, todo := range todos {
 		// coudln't get dynamic padding to work
 		padding := width - len(todo.Task)
-		// fmt.Printf("%d)  %-*s  |  %s\n", index+1, padding, todo.Task, todo.Priority)
-		fmt.Print("| "+strconv.FormatInt(int64(index+1), 10)+") "+todo.Task+strings.Repeat(" ", padding)+"  | ", "\n|"+strings.Repeat(" ", width+6)+"|", "\n")
+
+		if todo.checkIfCompleted() {
+			fmt.Print("| "+strconv.FormatInt(int64(index+1), 10)+") "+green+todo.Task+reset+strings.Repeat(" ", padding)+"  | ", "\n|"+strings.Repeat(" ", width+6)+"|", "\n")
+		} else {
+			fmt.Print("| "+strconv.FormatInt(int64(index+1), 10)+") "+todo.Task+strings.Repeat(" ", padding)+"  | ", "\n|"+strings.Repeat(" ", width+6)+"|", "\n")
+			// fmt.Printf("%d)  %-*s  |  %s\n", index+1, padding, todo.Task, todo.Priority)
+
+		}
 	}
 
 	fmt.Print(strings.Repeat("-", width+8), "\n\n")
@@ -156,4 +168,40 @@ func getLongestTodoLen() int {
 	}
 
 	return max
+}
+
+func MarkAsCompleted(index int) error {
+	todos, err := fetchRows()
+
+	if err != nil {
+		return err
+	}
+
+	for i, todo := range todos {
+		if i+1 == index {
+			query := "UPDATE todos SET completed = 1 WHERE todo = ?"
+			_, err := db.DB.Exec(query, todo.Task)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (t Todo) checkIfCompleted() bool {
+	query := "SELECT completed FROM todos WHERE todo = ?"
+
+	var val int
+
+	err := db.DB.QueryRow(query, t.Task).Scan(&val)
+
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+
+	return val == 1
 }

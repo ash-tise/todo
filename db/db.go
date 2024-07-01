@@ -20,7 +20,9 @@ func InitDB() {
 	createToDosTable := `
 	CREATE TABLE IF NOT EXISTS todos (
 	todo TEXT PRIMARY KEY,
-	priority TEXT NOT NULL
+	priority TEXT NOT NULL,
+	completed INTEGER NOT NULL DEFAULT 0,
+	created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 	)
 	`
 
