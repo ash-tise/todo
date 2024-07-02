@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
@@ -18,6 +19,17 @@ const (
 )
 
 func main() {
+
+	homeDir, err := os.UserHomeDir()
+
+	if err != nil {
+		log.Fatal("Failed to access User's home directory")
+		return
+	}
+
+	dbPath := homeDir + "/Todos/todos.db"
+
+	os.MkdirAll(homeDir+"/Todos", 0777)
 
 	if len(os.Args) < 2 {
 
@@ -93,12 +105,14 @@ func main() {
 			return
 		}
 	case "clear":
-		if _, err := os.Stat("todos.db"); os.IsNotExist(err) {
+
+		if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 			fmt.Printf("Your ToDo list is already cleared!")
 			return
 		}
 
-		err := os.Remove("todos.db")
+		err = os.Remove(dbPath)
+
 		if err != nil {
 			fmt.Printf("Failed to clear ToDos")
 			return

@@ -2,6 +2,8 @@ package db
 
 import (
 	"database/sql"
+	"log"
+	"os"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -9,9 +11,15 @@ import (
 var DB *sql.DB
 
 func InitDB() {
-	var err error
 
-	DB, err = sql.Open("sqlite3", "todos.db")
+	homeDir, err := os.UserHomeDir()
+	dbPath := homeDir + "/Todos/todos.db"
+
+	if err != nil {
+		log.Fatal("Failed to fetch User's Home directory")
+	}
+
+	DB, err = sql.Open("sqlite3", dbPath)
 
 	if err != nil {
 		panic("Failed to open database!")
