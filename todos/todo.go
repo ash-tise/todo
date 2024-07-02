@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"strconv"
-	"strings"
 
 	"github.com/ash-tise/todo/db"
 )
@@ -126,27 +124,25 @@ func DisplayTodos() error {
 	}
 
 	if len(todos) == 0 {
-		fmt.Println("You currently have no Todos!")
+		fmt.Print("You currently have no Todos!\n\n")
 		return nil
 	}
 
-	width := getLongestTodoLen()
-
-	fmt.Println(strings.Repeat("-", width+8)+"\n|", strings.Repeat(" ", width+4), "|")
+	fmt.Print("\n")
 	for index, todo := range todos {
 		// coudln't get dynamic padding to work
-		padding := width - len(todo.Task)
+		// padding := width - len(todo.Task)
 
 		if todo.checkIfCompleted() {
-			fmt.Print("| "+strconv.FormatInt(int64(index+1), 10)+") "+green+todo.Task+reset+strings.Repeat(" ", padding)+"  | ", "\n|"+strings.Repeat(" ", width+6)+"|", "\n")
+			// fmt.Print(strconv.FormatInt(int64(index+1), 10)+") "+green+todo.Task+reset+strings.Repeat(" ", padding), "\n"+strings.Repeat(" ", width+6), "\n")
+			fmt.Printf("%d)  %s%s    completed%s\n\n", index+1, green, todo.Task, reset)
 		} else {
-			fmt.Print("| "+strconv.FormatInt(int64(index+1), 10)+") "+todo.Task+strings.Repeat(" ", padding)+"  | ", "\n|"+strings.Repeat(" ", width+6)+"|", "\n")
+			fmt.Printf("%d)  %s\n\n", index+1, todo.Task)
+			// fmt.Print(strconv.FormatInt(int64(index+1), 10)+") "+todo.Task+strings.Repeat(" ", padding), "\n"+strings.Repeat(" ", width+6), "\n")
 			// fmt.Printf("%d)  %-*s  |  %s\n", index+1, padding, todo.Task, todo.Priority)
 
 		}
 	}
-
-	fmt.Print(strings.Repeat("-", width+8), "\n\n")
 
 	return nil
 
